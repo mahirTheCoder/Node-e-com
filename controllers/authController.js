@@ -21,7 +21,7 @@ const signup = async (req, res) => {
 
 
     // ---------save user data in database
-    const user = userSchema({
+    const user = await userSchema.create({
       fullname,
       email,
       password,
@@ -29,7 +29,7 @@ const signup = async (req, res) => {
       otpExpires: Date.now() + 10 * 60 * 1000, // OTP expires in 10 minutes
     });
 
-    user.save();
+   mailSender({ email, subject: "OTP for Email Verification", template: `<p>Your OTP for email verification is: <strong>${otp}</strong></p>` });
 
   } catch (err) {
     return res.status(500).send("Server error");
