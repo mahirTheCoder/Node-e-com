@@ -51,12 +51,17 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  tyimestamp: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-// HASH PASSWORD BEFORE SAVE
+
+// -----------prtesave hash password signup-------------
 userSchema.pre("save", async function (next) {
   try {
-    // password modify na hole hash korbe na
+    // password change na hole hash hobe na
     if (!this.isModified("password")) {
       return next();
     }
@@ -71,9 +76,12 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-// COMPARE PASSWORD METHOD
+// ----------- compare password signin -------------
+
 userSchema.methods.comparePassword = async function (userPassword) {
   return await bcrypt.compare(userPassword, this.password);
 };
+
+
 
 module.exports = mongoose.model("User", userSchema);
