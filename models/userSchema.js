@@ -60,21 +60,15 @@ const userSchema = new mongoose.Schema({
 
 
 // -----------prtesave hash password signup-------------
-userSchema.pre("save", async function (next) {
-  try {
-    // password change na hole hash hobe na
-    if (!this.isModified("password")) {
-      return next();
-    }
-
-    const salt = await bcrypt.genSalt(10);
-
-    this.password = await bcrypt.hash(this.password, salt);
-
-    next();
-  } catch (error) {
-    next(error);
+userSchema.pre("save", async function () {
+  // password change na hole hash hobe na
+  if (!this.isModified("password")) {
+    return;
   }
+
+  const salt = await bcrypt.genSalt(10);
+
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 // ----------- compare password signin -------------

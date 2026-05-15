@@ -10,11 +10,21 @@ const signup = async (req, res) => {
     if (!isValidEmail(email)) return res.status(400).send("Invalid email");
     if (!password) return res.status(400).send("Password is required");
 
-    // ---------exesting email check 
+    // ---------exesting email check
     const existingUser = await userSchema.findOne({ email });
     if (existingUser) {
       return res.status(400).send("User with this email already exists");
     }
+
+    // ---------save user data in database
+    const user = userSchema({
+      fullname,
+      email,
+      password,
+    });
+
+    user.save();
+
   } catch (err) {
     return res.status(500).send("Server error");
   }
