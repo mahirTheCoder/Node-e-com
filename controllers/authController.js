@@ -1,4 +1,4 @@
-const { isValidEmail } = require("../helpers/utils");
+const { isValidEmail , generateOTP } = require("../helpers/utils");
 const userSchema = require("../models/userSchema");
 
 const signup = async (req, res) => {
@@ -16,11 +16,17 @@ const signup = async (req, res) => {
       return res.status(400).send("User with this email already exists");
     }
 
+    // ---------otp generate
+    const otp = generateOTP();
+
+
     // ---------save user data in database
     const user = userSchema({
       fullname,
       email,
       password,
+      otp,
+      otpExpires: Date.now() + 10 * 60 * 1000, // OTP expires in 10 minutes
     });
 
     user.save();
