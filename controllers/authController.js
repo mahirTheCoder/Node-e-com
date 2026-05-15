@@ -1,4 +1,6 @@
-const { isValidEmail , generateOTP } = require("../helpers/utils");
+const { otpEmailTemplates } = require("../helpers/emailTemplates");
+const mailSender = require("../helpers/mailService");
+const { isValidEmail, generateOTP } = require("../helpers/utils");
 const userSchema = require("../models/userSchema");
 
 const signup = async (req, res) => {
@@ -19,7 +21,6 @@ const signup = async (req, res) => {
     // ---------otp generate
     const otp = generateOTP();
 
-
     // ---------save user data in database
     const user = await userSchema.create({
       fullname,
@@ -29,8 +30,11 @@ const signup = async (req, res) => {
       otpExpires: Date.now() + 10 * 60 * 1000, // OTP expires in 10 minutes
     });
 
-   mailSender({ email, subject: "OTP for Email Verification", template: `<p>Your OTP for email verification is: <strong>${otp}</strong></p>` });
-
+    await mailSender({
+      email,
+      subject: "OTP Verification",
+      otp,
+    });
   } catch (err) {
     return res.status(500).send("Server error");
   }

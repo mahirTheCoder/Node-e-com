@@ -1,27 +1,28 @@
 const nodemailer = require("nodemailer");
+const { otpTemplate } = require("./emailTemplates");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  port: 587,
-  secure: false,
+
   auth: {
     user: "mahirthecoder.bd@gmail.com",
     pass: "acgg rmko tyze jshm",
   },
 });
 
-
-const mailSender = async ({ email, subject, template }) => {
+const mailSender = async ({ email, subject, otp }) => {
   try {
     await transporter.sendMail({
-      from: `"node_Ecom" <mahirthecoder.bd@gmail.com>`,
+      from: `"node_Ecom team" <mahirthecoder.bd@gmail.com>`,
       to: email,
-      subject: subject,
-      html: template,
+      subject,
+      html: otpTemplate(otp),
     });
-  } catch (err) {
-    console.error("Error while sending mail:", err);
+
+    console.log("Mail Sent");
+  } catch (error) {
+    console.log(error);
   }
 };
 
-module.exports = { mailSender };
+module.exports = mailSender;
