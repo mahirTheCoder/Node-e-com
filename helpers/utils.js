@@ -15,9 +15,21 @@ const generateOTP = () => {
 
 //  Access Token Generate
 
-const generateAccessToken = (user) => {
-  const token = jwt.sign(user, process.env.JWT_SEC);
-  return token;
-};
+// const generateAccessToken = (user) => {
+//   return jwt.sign(
+//     { id: user._id, email: user.email, roll: user.roll },
+//     process.env.JWT_SEC,
+//     { expiresIn: "2h" }
+//   );
+// }
 
-module.exports = { isValidEmail, generateOTP, generateAccessToken }
+// // ---------refresh token generate
+// const generateRefreshToken = (user) => {
+//   return jwt.sign(
+//     { id: user._id, email: user.email, roll: user.roll },
+//     process.env.JWT_SEC,
+//     { expiresIn: "7d" }
+//   );
+// }
+
+module.exports = { isValidEmail, generateOTP, generateAccessToken, generateRefreshToken }

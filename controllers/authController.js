@@ -3,6 +3,9 @@ const mailSender = require("../helpers/mailService");
 const { isValidEmail, generateOTP } = require("../helpers/utils");
 const userSchema = require("../models/userSchema");
 
+
+
+// ---------Signup controller
 const signup = async (req, res) => {
   const { fullname, email, password } = req.body;
 
@@ -42,6 +45,8 @@ const signup = async (req, res) => {
   res.status(200).send("Signup successful!");
 };
 
+
+// -------OTP verify controller
 const verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
 
@@ -78,6 +83,8 @@ const verifyOTP = async (req, res) => {
   }
 };
 
+
+// -------Resend OTP controller
 const resendOTP = async (req, res) => {
   const { email } = req.body;
 
@@ -106,8 +113,33 @@ const resendOTP = async (req, res) => {
 };
 
 
+// --------------sign in controller
+const signin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await userSchema.findOne({ email }).select("+password");
+    if (!user) {
+      return res.status(400).send("Invalid email or password");
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(400).send("Invalid email or password");
+    }
+
+    // // Generate a token (you can use JWT here)
+    // const token = user.generateAuthToken();
+
+    res.status(200).send({ message: "Signin successful!" });
+  } catch (err) {
+    return res.status(500).send("Server error");
+  }
+};
+
 module.exports = {
   signup,
   verifyOTP,
-  resendOTP
+  resendOTP,
+  signin
 };
