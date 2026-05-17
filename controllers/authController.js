@@ -78,7 +78,32 @@ const verifyOTP = async (req, res) => {
   }
 };
 
+const resendOTP = async (req, res) => {
+  const { email } = req.body;
 
+  try {
+    const user = await userSchema.findOne({ email, isVerified: false });
+    console.log(user);
+    if (!user) {
+      return res.status(400).send("invalid request");
+    }
+
+    const otp = generateOTP();
+    user.otp = otp;
+    user.otpExpires = Date.now() + 5 * 60 * 1000;
+    await user.save();
+
+    await mailSender({
+      email,
+      subject: "Resend OTP",
+      otp,
+    });
+
+    res.status(200).send("OTP resent successfully!");
+  } catch (err) {
+    return res.status(500).send("Server error");
+  }
+};
 
 
 module.exports = {
