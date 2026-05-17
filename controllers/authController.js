@@ -2,9 +2,8 @@ const { otpEmailTemplates } = require("../helpers/emailTemplates");
 const mailSender = require("../helpers/mailService");
 const { isValidEmail, generateOTP } = require("../helpers/utils");
 const userSchema = require("../models/userSchema");
-
-
-
+const jwt = require("jsonwebtoken");
+const { generateAccessToken, generateRefreshToken } = require("../helpers/utils");
 // ---------Signup controller
 const signup = async (req, res) => {
   const { fullname, email, password } = req.body;
@@ -45,13 +44,11 @@ const signup = async (req, res) => {
   res.status(200).send("Signup successful!");
 };
 
-
 // -------OTP verify controller
 const verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
 
   try {
-
     const user = await userSchema.findOne({
       email,
       otp,
@@ -74,15 +71,12 @@ const verifyOTP = async (req, res) => {
     // res.redirect("clienturl/login");
 
     res.status(200).send("OTP verified successfully!");
-
   } catch (err) {
-
     console.log(err);
 
     return res.status(500).send("Server error");
   }
 };
-
 
 // -------Resend OTP controller
 const resendOTP = async (req, res) => {
@@ -112,6 +106,13 @@ const resendOTP = async (req, res) => {
   }
 };
 
+// --------cookies config
+const cookieConfig = {
+  httpOnly: true,
+  secure: false,
+  // sameSite: "strict",
+  maxAge: 2 * 60 * 60 * 1000, // 2 hours
+};
 
 // --------------sign in controller
 const signin = async (req, res) => {
@@ -119,21 +120,28 @@ const signin = async (req, res) => {
 
   try {
     const user = await userSchema.findOne({ email }).select("+password");
+
     if (!user) {
       return res.status(400).send("Invalid email or password");
     }
 
     const isMatch = await user.comparePassword(password);
+
     if (!isMatch) {
       return res.status(400).send("Invalid email or password");
     }
 
-    // // Generate a token (you can use JWT here)
-    // const token = user.generateAuthToken();
+    const token = generateAccessToken(user);
+    const reftoken = generateRefreshToken(user);
 
-    res.status(200).send({ message: "Signin successful!" });
+    res
+      .status(200)
+      .cookie("acc_tkn", token, cookieConfig)
+      .cookie("ref_tkn", reftoken, cookieConfig)
+      .send({ message: "Signin successful!" });
   } catch (err) {
-    return res.status(500).send("Server error");
+  console.log("SIGNIN ERROR:", err);
+  return res.status(500).send("Server error");
   }
 };
 
@@ -141,5 +149,5 @@ module.exports = {
   signup,
   verifyOTP,
   resendOTP,
-  signin
+  signin,
 };
