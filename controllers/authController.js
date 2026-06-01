@@ -111,7 +111,7 @@ const cookieConfig = {
   httpOnly: true,
   secure: false,
   // sameSite: "strict",
-  maxAge: 2 * 60 * 60 * 1000, // 2 hours
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
 // --------------sign in controller
@@ -137,10 +137,6 @@ const signin = async (req, res) => {
     // const reftoken = generateRefreshToken(user);
 
     res .status(200).cookie('acc_tkn', token, cookieConfig).cookie('ref_tkn', reftoken, cookieConfig).send({ message: "Signin successful!" });
-      // .status(200)
-      // .cookie("acc_tkn", token, cookieConfig)
-      // .cookie("ref_tkn", reftoken, cookieConfig)
-      // .send({ message: "Signin successful!" });
   } catch (err) {
     console.log(err)
     return res.status(500).send("Server error");
