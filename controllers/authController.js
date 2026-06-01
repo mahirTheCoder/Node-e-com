@@ -29,12 +29,12 @@ const signup = async (req, res) => {
       email,
       password,
       otp,
-      otpExpires: Date.now() + 10 * 60 * 1000, // OTP expires in 10 minutes
+      otpExpires: Date.now() + 2 * 60 * 1000, // OTP expires in 2 minutes
     });
 
     await mailSender({
       email,
-      subject: "OTP Verification",
+      subject: "OTP Verification", 
       otp,
     });
   } catch (err) {
@@ -131,19 +131,19 @@ const signin = async (req, res) => {
       return res.status(400).send("Invalid email or password");
     }
 
-    consol.log(user)
+    console.log(user);
 
-    const token = generateAccessToken(user);
-    const reftoken = generateRefreshToken(user);
+    // const token = generateAccessToken(user);
+    // const reftoken = generateRefreshToken(user);
 
-    res .status(200).send({ message: "Signin successful!", token, reftoken });
+    res .status(200).send({ message: "Signin successful!" });
       // .status(200)
       // .cookie("acc_tkn", token, cookieConfig)
       // .cookie("ref_tkn", reftoken, cookieConfig)
       // .send({ message: "Signin successful!" });
   } catch (err) {
-  console.log("SIGNIN ERROR:", err);
-  return res.status(500).send("Server error");
+    console.log(err)
+    return res.status(500).send("Server error");
   }
 };
 
