@@ -107,12 +107,12 @@ const resendOTP = async (req, res) => {
 };
 
 // // --------cookies config
-// const cookieConfig = {
-//   httpOnly: true,
-//   secure: false,
-//   // sameSite: "strict",
-//   maxAge: 2 * 60 * 60 * 1000, // 2 hours
-// };
+const cookieConfig = {
+  httpOnly: true,
+  secure: false,
+  // sameSite: "strict",
+  maxAge: 2 * 60 * 60 * 1000, // 2 hours
+};
 
 // --------------sign in controller
 const signin = async (req, res) => {
@@ -131,12 +131,12 @@ const signin = async (req, res) => {
       return res.status(400).send("Invalid email or password");
     }
 
-    console.log(user);
-
+    const token = generateAccessToken(user);
+    const reftoken = generateRefreshToken(user);
     // const token = generateAccessToken(user);
     // const reftoken = generateRefreshToken(user);
 
-    res .status(200).send({ message: "Signin successful!" });
+    res .status(200).cookie('acc_tkn', token, cookieConfig).cookie('ref_tkn', reftoken, cookieConfig).send({ message: "Signin successful!" });
       // .status(200)
       // .cookie("acc_tkn", token, cookieConfig)
       // .cookie("ref_tkn", reftoken, cookieConfig)
