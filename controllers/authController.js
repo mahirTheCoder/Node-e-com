@@ -143,6 +143,11 @@ const signin = async (req, res) => {
   }
 };
 
+// const twoFactorAuth = async (req, res) => {
+//   const { email } = req.body; 
+
+// }
+
 module.exports = {
   signup, 
   verifyOTP,
