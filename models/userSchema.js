@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
   roll: {
     type: String,
     required: true,
-    enum: ["user", "admin", 'moderator'],
+    enum: ["user", "admin", "moderator"],
     default: "user",
   },
 
@@ -57,7 +57,6 @@ const userSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-
 
 // -----------prtesave hash password signup-------------
 userSchema.pre("save", async function () {
@@ -76,7 +75,5 @@ userSchema.pre("save", async function () {
 userSchema.methods.comparePassword = async function (userPassword) {
   return await bcrypt.compare(userPassword, this.password);
 };
-
-
 
 module.exports = mongoose.model("User", userSchema);
