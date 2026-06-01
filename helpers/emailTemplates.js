@@ -20,7 +20,7 @@ const otpTemplate = (otp) => {
         data: [
           {
             OTP: otp,
-            Expires: "5 Minutes",
+            Expires: "2 Minutes",
           },
         ],
       },
